@@ -62,7 +62,8 @@ def _generate_sqil_samples(
     # e.g [1, 2, 3, 4 ,5 ,6] -> [1, 3, 5] and [2, 4, 6]
     yield reverb.ReplaySample(
         info=replay_sample.info,
-        data=tree.map_structure(lambda x: x[0::2], double_batch))
+        data=tree.map_structure(lambda x: x[::2], double_batch),
+    )
     yield reverb.ReplaySample(
         info=replay_sample.info,
         data=tree.map_structure(lambda x: x[1::2], double_batch))

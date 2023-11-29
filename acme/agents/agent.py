@@ -85,11 +85,9 @@ class Agent(core.Actor, core.VariableSource):
   def _has_data_for_training(self):
     if self._iterator.ready():
       return True
-    for (table, batch_size) in zip(self._replay_tables,
-                                   self._batch_size_upper_bounds):
-      if not table.can_sample(batch_size):
-        return False
-    return True
+    return all(
+        table.can_sample(batch_size) for table, batch_size in zip(
+            self._replay_tables, self._batch_size_upper_bounds))
 
   def update(self):  # pytype: disable=signature-mismatch  # overriding-parameter-count-checks
     if self._iterator:

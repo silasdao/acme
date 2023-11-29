@@ -274,9 +274,7 @@ class MultiObjectiveMPO(snt.Module):
     loss_dual = loss_alpha_mean + loss_alpha_stddev + loss_temperature_mean
     loss = loss_policy + loss_kl_penalty + loss_dual
 
-    stats = {}
-    # Dual Variables.
-    stats["dual_alpha_mean"] = tf.reduce_mean(alpha_mean)
+    stats = {"dual_alpha_mean": tf.reduce_mean(alpha_mean)}
     stats["dual_alpha_stddev"] = tf.reduce_mean(alpha_stddev)
     # Losses.
     stats["loss_policy"] = tf.reduce_mean(loss)
@@ -296,18 +294,18 @@ class MultiObjectiveMPO(snt.Module):
 
     # Log per-objective values.
     for i, name in enumerate(self._objective_names):
-      stats["{}_dual_temperature".format(name)] = temperature[i]
-      stats["{}_loss_temperature".format(name)] = loss_temperature[i]
-      stats["{}_kl_q_rel".format(name)] = tf.reduce_mean(
-          kl_nonparametric[:, i]) / self._epsilons[i]
+      stats[f"{name}_dual_temperature"] = temperature[i]
+      stats[f"{name}_loss_temperature"] = loss_temperature[i]
+      stats[f"{name}_kl_q_rel"] = (tf.reduce_mean(kl_nonparametric[:, i]) /
+                                   self._epsilons[i])
 
       # Q measurements.
-      stats["{}_q_min".format(name)] = tf.reduce_mean(tf.reduce_min(
-          q_values, axis=0)[:, i])
-      stats["{}_q_mean".format(name)] = tf.reduce_mean(tf.reduce_mean(
-          q_values, axis=0)[:, i])
-      stats["{}_q_max".format(name)] = tf.reduce_mean(tf.reduce_max(
-          q_values, axis=0)[:, i])
+      stats[f"{name}_q_min"] = tf.reduce_mean(
+          tf.reduce_min(q_values, axis=0)[:, i])
+      stats[f"{name}_q_mean"] = tf.reduce_mean(
+          tf.reduce_mean(q_values, axis=0)[:, i])
+      stats[f"{name}_q_max"] = tf.reduce_mean(
+          tf.reduce_max(q_values, axis=0)[:, i])
 
     return loss, stats
 

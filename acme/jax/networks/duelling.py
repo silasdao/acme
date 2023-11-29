@@ -55,6 +55,4 @@ class DuellingMLP(hk.Module):
     # Advantages have zero mean.
     advantages -= jnp.mean(advantages, axis=-1, keepdims=True)  # [B, A]
 
-    q_values = value + advantages  # [B, A]
-
-    return q_values
+    return value + advantages

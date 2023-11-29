@@ -46,9 +46,7 @@ class RescaleToSpec(snt.Module):
 
   def __call__(self, inputs: tf.Tensor) -> tf.Tensor:
     inputs = 0.5 * (inputs + 1.0)  # [0, 1]
-    output = inputs * self._scale + self._offset  # [minimum, maximum]
-
-    return output
+    return inputs * self._scale + self._offset
 
 
 class TanhToSpec(snt.Module):
@@ -65,9 +63,8 @@ class TanhToSpec(snt.Module):
     if isinstance(inputs, tfd.Distribution):
       inputs = tfb.Tanh()(inputs)
       inputs = tfb.ScaleMatvecDiag(0.5 * self._scale)(inputs)
-      output = tfb.Shift(self._offset + 0.5 * self._scale)(inputs)
+      return tfb.Shift(self._offset + 0.5 * self._scale)(inputs)
     else:
       inputs = tf.tanh(inputs)  # [-1, 1]
       inputs = 0.5 * (inputs + 1.0)  # [0, 1]
-      output = inputs * self._scale + self._offset  # [minimum, maximum]
-    return output
+      return inputs * self._scale + self._offset

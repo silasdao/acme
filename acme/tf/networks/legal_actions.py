@@ -121,7 +121,4 @@ class EpsilonGreedy(snt.Module):
     # Epsilon-greedy action distribution.
     probs = self._epsilon * dither_probs + (1 - self._epsilon) * greedy_probs
 
-    # Make the policy object.
-    policy = tfd.Categorical(probs=probs)
-
-    return policy
+    return tfd.Categorical(probs=probs)

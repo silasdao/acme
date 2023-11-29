@@ -281,9 +281,7 @@ class MPO(snt.Module):
     loss_dual = loss_alpha_mean + loss_alpha_stddev + loss_temperature
     loss = loss_policy + loss_kl_penalty + loss_dual
 
-    stats = {}
-    # Dual Variables.
-    stats["dual_alpha_mean"] = tf.reduce_mean(alpha_mean)
+    stats = {"dual_alpha_mean": tf.reduce_mean(alpha_mean)}
     stats["dual_alpha_stddev"] = tf.reduce_mean(alpha_stddev)
     stats["dual_temperature"] = tf.reduce_mean(temperature)
     # Losses.

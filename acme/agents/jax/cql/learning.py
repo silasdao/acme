@@ -445,10 +445,7 @@ class CQLLearner(acme.Learner):
     transitions = next(self._demonstrations)
 
     counts = self._counter.get_counts()
-    if 'learner_steps' not in counts:
-      cur_step = 0
-    else:
-      cur_step = counts['learner_steps']
+    cur_step = 0 if 'learner_steps' not in counts else counts['learner_steps']
     in_initial_bc_iters = cur_step < self._num_bc_iters
 
     if in_initial_bc_iters:

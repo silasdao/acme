@@ -103,9 +103,8 @@ class VariableClient:
     if isinstance(self._update_period, datetime.timedelta):
       if self._update_period.total_seconds() + self._last_call > time.time():
         return
-    else:
-      if self._call_counter < self._update_period:
-        return
+    elif self._call_counter < self._update_period:
+      return
 
     if wait:
       if self._future is not None:
@@ -148,7 +147,4 @@ class VariableClient:
     if self._params is None:
       self.update_and_wait()
 
-    if len(self._params) == 1:
-      return self._params[0]
-    else:
-      return self._params
+    return self._params[0] if len(self._params) == 1 else self._params

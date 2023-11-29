@@ -92,8 +92,7 @@ def make_networks(
 def make_environment(evaluation: bool = False):
   del evaluation  # Unused.
   environment = suite.load('cartpole', 'balance')
-  wrapped = wrappers.SinglePrecisionWrapper(environment)
-  return wrapped
+  return wrappers.SinglePrecisionWrapper(environment)
 
 
 def compute_action_norm(target_pi_samples: tf.Tensor,

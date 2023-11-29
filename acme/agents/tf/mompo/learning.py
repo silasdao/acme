@@ -287,7 +287,7 @@ class MultiObjectiveMPOLearner(acme.Learner):
       r_t_all = []
       for objective in self._reward_objectives:
         r = objective.reward_fn(o_tm1, transitions.action, transitions.reward)
-        reward_stats['{}_reward'.format(objective.name)] = tf.reduce_mean(r)
+        reward_stats[f'{objective.name}_reward'] = tf.reduce_mean(r)
         r_t_all.append(r)
       r_t_all = tf.stack(r_t_all, axis=-1)
       r_t_all.get_shape().assert_has_rank(2)  # [B, C]
@@ -303,9 +303,12 @@ class MultiObjectiveMPOLearner(acme.Learner):
 
       # Add sampled Q-values for objectives with defined qvalue_fn
       sampled_q_t_k = [sampled_q_t]
-      for objective in self._qvalue_objectives:
-        sampled_q_t_k.append(tf.expand_dims(tf.stop_gradient(
-            objective.qvalue_fn(sampled_actions, sampled_q_t)), axis=-1))
+      sampled_q_t_k.extend(
+          tf.expand_dims(
+              tf.stop_gradient(objective.qvalue_fn(sampled_actions,
+                                                   sampled_q_t)),
+              axis=-1,
+          ) for objective in self._qvalue_objectives)
       sampled_q_t_k = tf.concat(sampled_q_t_k, axis=-1)  # [N, B, K]
 
       # Compute MPO policy loss.

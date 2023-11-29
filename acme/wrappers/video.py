@@ -122,12 +122,12 @@ class VideoWrapper(base.EnvironmentWrapper):
           self._path, f'{self._filename}_{self._counter:04d}'
       )
       if self._to_html:
-        path = path_without_extension + '.html'
+        path = f'{path_without_extension}.html'
         video = animation.to_html5_video()
         with open(path, 'w') as f:
           f.write(video)
       else:
-        path = path_without_extension + '.m4v'
+        path = f'{path_without_extension}.m4v'
         # Animation.save can save only locally. Save first and copy using
         # gfile.
         with tempfile.TemporaryDirectory() as tmp_dir:

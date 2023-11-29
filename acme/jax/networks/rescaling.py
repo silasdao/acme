@@ -39,8 +39,7 @@ class RescaleToSpec:
     scale = self.spec.maximum - self.spec.minimum
     offset = self.spec.minimum
     inputs = 0.5 * (inputs + 1.0)  # [0, 1]
-    output = inputs * scale + offset  # [minimum, maximum]
-    return output
+    return inputs * scale + offset
 
 
 @dataclasses.dataclass
@@ -53,5 +52,4 @@ class TanhToSpec:
     offset = self.spec.minimum
     inputs = lax.tanh(inputs)  # [-1, 1]
     inputs = 0.5 * (inputs + 1.0)  # [0, 1]
-    output = inputs * scale + offset  # [minimum, maximum]
-    return output
+    return inputs * scale + offset

@@ -39,9 +39,9 @@ class GymEnvWithInfo(gym.Env):
   def step(self, action: np.ndarray):
     self._step += 1
     info = {'survival_bonus': 1}
-    if self._step == 1 or self._step == 7:
+    if self._step in {1, 7}:
       info['found_checkpoint'] = 1
-    if self._step == 5:
+    elif self._step == 5:
       info['picked_up_an_apple'] = 1
     return self.observation_space.sample(), 0, False, info
 

@@ -87,9 +87,8 @@ class FrameStacker:
 
     if not self._flatten:
       return stacked_frames
-    else:
-      new_shape = stacked_frames.shape[:-2] + (-1,)
-      return stacked_frames.reshape(*new_shape)
+    new_shape = stacked_frames.shape[:-2] + (-1,)
+    return stacked_frames.reshape(*new_shape)
 
   def update_spec(self, spec: dm_env_specs.Array) -> dm_env_specs.Array:
     if not self._flatten:

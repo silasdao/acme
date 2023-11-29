@@ -109,9 +109,9 @@ class BaseAtariWrapper(abc.ABC, base.EnvironmentWrapper):
       ValueError: For various invalid inputs.
     """
     if not 1 <= pooled_frames <= action_repeats:
-      raise ValueError("pooled_frames ({}) must be between 1 and "
-                       "action_repeats ({}) inclusive".format(
-                           pooled_frames, action_repeats))
+      raise ValueError(
+          f"pooled_frames ({pooled_frames}) must be between 1 and action_repeats ({action_repeats}) inclusive"
+      )
 
     if zero_discount_on_life_loss:
       super().__init__(_ZeroDiscountOnLifeLoss(environment))
@@ -159,11 +159,7 @@ class BaseAtariWrapper(abc.ABC, base.EnvironmentWrapper):
     Returns:
       An `Array` specification for the pixel observations.
     """
-    if self._to_float:
-      pixels_dtype = float
-    else:
-      pixels_dtype = np.uint8
-
+    pixels_dtype = float if self._to_float else np.uint8
     if self._grayscaling:
       pixels_spec_shape = (self._height, self._width)
       pixels_spec_name = "grayscale"
@@ -264,9 +260,9 @@ class BaseAtariWrapper(abc.ABC, base.EnvironmentWrapper):
     else:
       stacked_observation = self._frame_stacker.step(processed_pixels)
 
-    # We use last timestep for lives only.
-    observation = timestep_stack[-1].observation
     if self._expose_lives_observation:
+      # We use last timestep for lives only.
+      observation = timestep_stack[-1].observation
       return (stacked_observation,) + observation[1:]
 
     return stacked_observation
@@ -388,6 +384,4 @@ class _ZeroDiscountOnLifeLoss(base.EnvironmentWrapper):
     is_life_loss &= lives < self._last_num_lives
 
     self._last_num_lives = lives
-    if is_life_loss:
-      return timestep._replace(discount=0.0)
-    return timestep
+    return timestep._replace(discount=0.0) if is_life_loss else timestep

@@ -73,8 +73,7 @@ class OpenSpielWrapper(dm_env.Environment):
     elif step_type == rl_environment.StepType.LAST:
       step_type = dm_env.StepType.LAST
     else:
-      raise ValueError(
-          "Did not recognize OpenSpiel StepType: {}".format(step_type))
+      raise ValueError(f"Did not recognize OpenSpiel StepType: {step_type}")
 
     return dm_env.TimeStep(observation=observations,
                            reward=rewards,
@@ -142,6 +141,5 @@ class OpenSpielWrapper(dm_env.Environment):
   def __getattr__(self, name: str):
     """Expose any other attributes of the underlying environment."""
     if name.startswith("__"):
-      raise AttributeError(
-          "attempted to get missing private attribute '{}'".format(name))
+      raise AttributeError(f"attempted to get missing private attribute '{name}'")
     return getattr(self._environment, name)

@@ -233,10 +233,10 @@ class DiscriminatorMLP(hk.Module):
           b_init=b_init,
           with_bias=with_bias)
 
-    layers = []
-    for index, output_size in enumerate(layer_sizes):
-      layers.append(
-          layer_module(output_size=output_size, name=f'linear_{index}'))
+    layers = [
+        layer_module(output_size=output_size, name=f'linear_{index}')
+        for index, output_size in enumerate(layer_sizes)
+    ]
     self._layers = tuple(layers)
 
   def __call__(

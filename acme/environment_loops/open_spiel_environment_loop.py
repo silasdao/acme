@@ -87,21 +87,21 @@ class OpenSpielEnvironmentLoop(core.Worker):
             self._actors[player_id].update()
       self._observed_first = [False] * len(self._actors)
       self._prev_actions = [pyspiel.INVALID_ACTION] * len(self._actors)
+    elif self._observed_first[player]:
+      player_timestep = self._get_player_timestep(timestep, player)
+      self._actors[player].observe(self._prev_actions[player],
+                                   player_timestep)
+      if self._should_update:
+        self._actors[player].update()
+
     else:
-      if not self._observed_first[player]:
-        player_timestep = dm_env.TimeStep(
-            observation=timestep.observation[player],
-            reward=None,
-            discount=None,
-            step_type=dm_env.StepType.FIRST)
-        self._actors[player].observe_first(player_timestep)
-        self._observed_first[player] = True
-      else:
-        player_timestep = self._get_player_timestep(timestep, player)
-        self._actors[player].observe(self._prev_actions[player],
-                                     player_timestep)
-        if self._should_update:
-          self._actors[player].update()
+      player_timestep = dm_env.TimeStep(
+          observation=timestep.observation[player],
+          reward=None,
+          discount=None,
+          step_type=dm_env.StepType.FIRST)
+      self._actors[player].observe_first(player_timestep)
+      self._observed_first[player] = True
 
   def _get_action(self, timestep: dm_env.TimeStep, player: int) -> int:
     self._prev_actions[player] = self._actors[player].select_action(
@@ -207,7 +207,7 @@ class OpenSpielEnvironmentLoop(core.Worker):
       ValueError: If both 'num_episodes' and 'num_steps' are not None.
     """
 
-    if not (num_episodes is None or num_steps is None):
+    if num_episodes is not None and num_steps is not None:
       raise ValueError('Either "num_episodes" or "num_steps" should be None.')
 
     def should_terminate(episode_count: int, step_count: int) -> bool:

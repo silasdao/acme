@@ -86,8 +86,7 @@ class OnlineTargetPiQ(snt.Module):
       analytic_kl_to_target = online_pi_dist.kl_divergence(target_prior_dist)
 
       output_list += [analytic_kl_divergence, analytic_kl_to_target]
-    output = self._output_tuple(*output_list)
-    return output
+    return self._output_tuple(*output_list)
 
 
 def static_rnn(core: snt.Module, inputs: types.NestedTensor,
@@ -113,8 +112,7 @@ def static_rnn(core: snt.Module, inputs: types.NestedTensor,
     step_output = core(inputs_t)
     step_outputs.append(step_output)
 
-  step_outputs = _nest_stack(step_outputs)
-  return step_outputs
+  return _nest_stack(step_outputs)
 
 
 def mask_out_restarting(tensor: tf.Tensor, start_of_episode: tf.Tensor):
@@ -132,8 +130,7 @@ def mask_out_restarting(tensor: tf.Tensor, start_of_episode: tf.Tensor):
   tensor.get_shape().assert_has_rank(2)
   start_of_episode.get_shape().assert_has_rank(2)
   weights = tf.cast(~start_of_episode, dtype=tf.float32)
-  masked_tensor = tensor * weights
-  return masked_tensor
+  return tensor * weights
 
 
 def batch_concat_selection(observation_dict: Dict[str, types.NestedTensor],
@@ -145,8 +142,8 @@ def batch_concat_selection(observation_dict: Dict[str, types.NestedTensor],
   for obs in concat_keys:
     if obs not in observation_dict:
       raise KeyError(
-          'Missing observation. Requested: {} (available: {})'.format(
-              obs, list(observation_dict.keys())))
+          f'Missing observation. Requested: {obs} (available: {list(observation_dict.keys())})'
+      )
     to_concat.append(tf.cast(observation_dict[obs], output_dtype))
 
   return tf2_utils.batch_concat(to_concat)

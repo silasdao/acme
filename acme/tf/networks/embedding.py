@@ -40,6 +40,4 @@ class OAREmbedding(snt.Module):
     action = tf.one_hot(inputs.action, depth=self._num_actions)  # [T?, B, A]
     reward = tf.nn.tanh(inputs.reward)  # [T?, B, 1]
 
-    embedding = tf.concat([features, action, reward], axis=-1)  # [T?, B, D+A+1]
-
-    return embedding
+    return tf.concat([features, action, reward], axis=-1)

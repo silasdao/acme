@@ -74,7 +74,7 @@ def multigrid_obs_preproc(obs: Dict[str, Any],
 
   outputs = []
 
-  if 'image' in obs.keys():
+  if 'image' in obs:
     image_preproc = hk.Sequential([
         _cast_and_scale,
         hk.Conv2D(output_channels=conv_filters, kernel_shape=conv_kernel),
@@ -83,11 +83,11 @@ def multigrid_obs_preproc(obs: Dict[str, Any],
     ])
     outputs.append(image_preproc(obs['image']))
 
-  if 'position' in obs.keys():
+  if 'position' in obs:
     position_preproc = hk.Sequential([_cast_and_scale, hk.Linear(scalar_fc)])
     outputs.append(position_preproc(obs['position']))
 
-  if scalar_name in obs.keys():
+  if scalar_name in obs:
     direction_preproc = hk.Sequential([
         functools.partial(jax.nn.one_hot, num_classes=scalar_dim),
         hk.Flatten(),

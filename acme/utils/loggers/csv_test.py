@@ -53,8 +53,7 @@ class CSVLoggingTest(test_utils.TestCase):
     outputs = []
     with open(logger.file_path) as f:
       csv_reader = csv.DictReader(f)
-      for row in csv_reader:
-        outputs.append(dict(row))
+      outputs.extend(dict(row) for row in csv_reader)
     self.assertEqual(outputs, _TEST_INPUTS)
 
   @parameterized.parameters(True, False)
@@ -63,24 +62,21 @@ class CSVLoggingTest(test_utils.TestCase):
     # Set up logger.
     directory = paths.process_path(
         self.get_tempdir(), 'logs', 'my_label', add_uid=add_uid)
-    file = open(os.path.join(directory, 'logs.csv'), 'a')
-    logger = csv_logger.CSVLogger(directory_or_file=file, add_uid=add_uid)
+    with open(os.path.join(directory, 'logs.csv'), 'a') as file:
+      logger = csv_logger.CSVLogger(directory_or_file=file, add_uid=add_uid)
 
-    # Write data and close.
-    for inp in _TEST_INPUTS:
-      logger.write(inp)
-    logger.close()
+      # Write data and close.
+      for inp in _TEST_INPUTS:
+        logger.write(inp)
+      logger.close()
 
-    # Logger doesn't close the file; caller must do this manually.
-    self.assertFalse(file.closed)
-    file.close()
-
+      # Logger doesn't close the file; caller must do this manually.
+      self.assertFalse(file.closed)
     # Read back data.
     outputs = []
     with open(logger.file_path) as f:
       csv_reader = csv.DictReader(f)
-      for row in csv_reader:
-        outputs.append(dict(row))
+      outputs.extend(dict(row) for row in csv_reader)
     self.assertEqual(outputs, _TEST_INPUTS)
 
   def test_flush(self):
@@ -93,8 +89,7 @@ class CSVLoggingTest(test_utils.TestCase):
     outputs = []
     with open(logger.file_path) as f:
       csv_reader = csv.DictReader(f)
-      for row in csv_reader:
-        outputs.append(dict(row))
+      outputs.extend(dict(row) for row in csv_reader)
     self.assertEqual(outputs, _TEST_INPUTS)
 
 

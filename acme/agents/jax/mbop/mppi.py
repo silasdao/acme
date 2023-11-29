@@ -96,7 +96,7 @@ def return_top_k_average(action_trajectories: jnp.ndarray,
       trajectories.
   """
   top_k_trajectories = action_trajectories[jnp.argsort(
-      jnp.squeeze(cum_reward))[-int(k):]]
+      jnp.squeeze(cum_reward))[-k:]]
   return jnp.mean(top_k_trajectories, axis=0)
 
 

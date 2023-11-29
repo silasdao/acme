@@ -59,10 +59,7 @@ class ActorTest(parameterized.TestCase):
       ])(
           inputs)
       action = jnp.argmax(action_values, axis=-1)
-      if has_extras:
-        return action, (action_values,)
-      else:
-        return action
+      return (action, (action_values, )) if has_extras else action
 
     policy = hk.transform(policy)
 

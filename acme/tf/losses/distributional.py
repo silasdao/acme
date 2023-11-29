@@ -29,11 +29,8 @@ def categorical(q_tm1: networks.DiscreteValuedDistribution, r_t: tf.Tensor,
   # Performs L2 projection.
   target = tf.stop_gradient(l2_project(z_t, p_t, q_t.values))
 
-  # Calculates loss.
-  loss = tf.nn.softmax_cross_entropy_with_logits(
-      logits=q_tm1.logits, labels=target)
-
-  return loss
+  return tf.nn.softmax_cross_entropy_with_logits(logits=q_tm1.logits,
+                                                 labels=target)
 
 
 # Use an old version of the l2 projection which is probably slower on CPU
@@ -118,11 +115,8 @@ def multiaxis_categorical(  # pylint: disable=invalid-name
   # Performs L2 projection.
   target = tf.stop_gradient(multiaxis_l2_project(z_t, p_t, q_t.values))
 
-  # Calculates loss.
-  loss = tf.nn.softmax_cross_entropy_with_logits(
-      logits=q_tm1.logits, labels=target)
-
-  return loss
+  return tf.nn.softmax_cross_entropy_with_logits(logits=q_tm1.logits,
+                                                 labels=target)
 
 
 # A modification of l2_project that allows multi-axis support arguments.

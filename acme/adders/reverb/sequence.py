@@ -151,15 +151,10 @@ class SequenceAdder(base.ReverbAdder):
     if pad_end_of_episode is not None or break_end_of_episode is not None:
       if not break_end_of_episode:
         self._end_of_episode_behavior = EndBehavior.CONTINUE
-      elif break_end_of_episode and pad_end_of_episode:
+      elif pad_end_of_episode:
         self._end_of_episode_behavior = EndBehavior.ZERO_PAD
-      elif break_end_of_episode and not pad_end_of_episode:
-        self._end_of_episode_behavior = EndBehavior.TRUNCATE
       else:
-        raise ValueError(
-            'Reached an unexpected configuration of the SequenceAdder '
-            f'with break_end_of_episode={break_end_of_episode} '
-            f'and pad_end_of_episode={pad_end_of_episode}.')
+        self._end_of_episode_behavior = EndBehavior.TRUNCATE
     elif isinstance(end_of_episode_behavior, EndBehavior):
       self._end_of_episode_behavior = end_of_episode_behavior
     else:

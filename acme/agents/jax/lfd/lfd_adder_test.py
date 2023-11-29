@@ -80,11 +80,11 @@ class LfdAdderTest(absltest.TestCase):
   def generate_demonstration(self):
     episode_index = 0
     while True:
-      episode = self.generate_episode(self._demonstration_episode_type,
-                                      episode_index,
-                                      self._demonstration_episode_length)
-      for x in episode:
-        yield x
+      yield from self.generate_episode(
+          self._demonstration_episode_type,
+          episode_index,
+          self._demonstration_episode_length,
+      )
       episode_index += 1
 
   def test_adder(self):

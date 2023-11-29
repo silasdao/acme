@@ -185,11 +185,7 @@ class AdderTestMixin(absltest.TestCase):
       for step in steps[:-1]:
         action, ts = step[0], step[1]
 
-        if has_extras:
-          extras = step[2]
-        else:
-          extras = ()
-
+        extras = step[2] if has_extras else ()
         adder.add(action, next_timestep=ts, extras=extras)
 
       # Add the final step.

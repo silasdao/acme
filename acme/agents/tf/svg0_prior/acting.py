@@ -47,10 +47,7 @@ class SVG0Actor(actors.FeedForwardActor):
 
     # Compute the policy, conditioned on the observation.
     policy = self._policy_network(batched_observation)
-    if self._deterministic_policy:
-      action = policy.mean()
-    else:
-      action = policy.sample()
+    action = policy.mean() if self._deterministic_policy else policy.sample()
     self._log_prob = policy.log_prob(action)
     return tf2_utils.to_numpy_squeeze(action)
 

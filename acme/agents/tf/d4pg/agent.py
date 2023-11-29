@@ -395,15 +395,14 @@ def _ensure_accelerator(accelerator: str) -> str:
   Raises:
     RuntimeError: Thrown if the expected accelerator isn't found.
   """
-  devices = tf.config.get_visible_devices(device_type=accelerator)
-
-  if devices:
+  if devices := tf.config.get_visible_devices(device_type=accelerator):
     return accelerator
-  else:
-    error_messages = [f'Couldn\'t find any {accelerator} devices.',
-                      'tf.config.get_visible_devices() returned:']
-    error_messages.extend([str(d) for d in devices])
-    raise RuntimeError('\n'.join(error_messages))
+  error_messages = [
+      f"Couldn\'t find any {accelerator} devices.",
+      'tf.config.get_visible_devices() returned:',
+      *[str(d) for d in devices],
+  ]
+  raise RuntimeError('\n'.join(error_messages))
 
 
 def _get_first_available_accelerator_type(
@@ -423,12 +422,10 @@ def _get_first_available_accelerator_type(
   get_visible_devices = tf.config.get_visible_devices
 
   for wishlist_device in wishlist:
-    devices = get_visible_devices(device_type=wishlist_device)
-    if devices:
+    if devices := get_visible_devices(device_type=wishlist_device):
       return wishlist_device
 
-  available = ', '.join(
-      sorted(frozenset([d.type for d in get_visible_devices()])))
+  available = ', '.join(sorted(frozenset(d.type for d in get_visible_devices())))
   raise RuntimeError(
       'Couldn\'t find any devices from {wishlist}.' +
       f'Only the following types are available: {available}.')
@@ -456,8 +453,7 @@ def get_replicator(accelerator: Optional[str]) -> Replicator:
   else:
     accelerator = _get_first_available_accelerator_type()
 
-  if accelerator == 'TPU':
-    tf.tpu.experimental.initialize_tpu_system()
-    return snt.distribute.TpuReplicator()
-  else:
+  if accelerator != 'TPU':
     return snt.distribute.Replicator()
+  tf.tpu.experimental.initialize_tpu_system()
+  return snt.distribute.TpuReplicator()

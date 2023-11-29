@@ -83,10 +83,7 @@ class OpenSpielEnvironmentLoopTest(parameterized.TestCase):
     env = wrappers.SinglePrecisionWrapper(env)
     environment_spec = acme.make_environment_spec(env)
 
-    actors = []
-    for _ in range(env.num_players):
-      actors.append(RandomActor(environment_spec))
-
+    actors = [RandomActor(environment_spec) for _ in range(env.num_players)]
     loop = open_spiel_environment_loop.OpenSpielEnvironmentLoop(env, actors)
     result = loop.run_episode()
     self.assertIn('episode_length', result)

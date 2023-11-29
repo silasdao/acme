@@ -212,7 +212,7 @@ class PPOBuilder(
           update_period=self._config.variable_update_period)
       obs_normalization_fns = self._config.obs_normalization_fns_factory(
           environment_spec.observations)
-      actor = normalization.NormalizedGenericActor(
+      return normalization.NormalizedGenericActor(
           actor_core,
           obs_normalization_fns,
           random_key,
@@ -228,9 +228,11 @@ class PPOBuilder(
           'params',
           device='cpu',
           update_period=self._config.variable_update_period)
-      actor = actors.GenericActor(
-          actor_core, random_key, variable_client, adder, backend='cpu')
-    return actor
+      return actors.GenericActor(actor_core,
+                                 random_key,
+                                 variable_client,
+                                 adder,
+                                 backend='cpu')
 
   def make_policy(
       self,

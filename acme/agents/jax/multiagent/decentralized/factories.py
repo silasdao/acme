@@ -195,7 +195,7 @@ def builder_factory(
 ) -> Dict[ma_types.AgentID, jax_builders.GenericActorLearnerBuilder]:
   """Returns default policy networks for all agents."""
   init_fn = init_builder_fn or init_default_builder
-  builders = {}
-  for agent_id, agent_type in agent_types.items():
-    builders[agent_id] = init_fn(agent_type, agent_configs[agent_id])
-  return builders
+  return {
+      agent_id: init_fn(agent_type, agent_configs[agent_id])
+      for agent_id, agent_type in agent_types.items()
+  }

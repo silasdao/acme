@@ -93,9 +93,7 @@ class BCLearner(acme.Learner, tf2_savers.TFSaveable):
 
     # Compute the global norm of the gradients for logging.
     global_gradient_norm = tf.linalg.global_norm(gradients)
-    fetches = {'loss': loss, 'gradient_norm': global_gradient_norm}
-
-    return fetches
+    return {'loss': loss, 'gradient_norm': global_gradient_norm}
 
   def step(self):
     # Do a batch of SGD.
