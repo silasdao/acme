@@ -366,8 +366,7 @@ class CategoricalCriticHead(hk.Module):
         w_init=w_init)
 
   def __call__(self, embedding: chex.Array) -> tfd.Distribution:
-    output = self._head(embedding)
-    return output
+    return self._head(embedding)
 
 
 class DiscreteValuedTfpHead(hk.Module):

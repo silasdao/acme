@@ -58,7 +58,7 @@ def _orthogonal_regularization_loss(params: networks_lib.Params):
       reg_loss += _orthogonal_regularization_loss(params[key])
       continue
     variable = params[key]
-    assert len(variable.shape) in [1, 2, 4]
+    assert len(variable.shape) in {1, 2, 4}
     if len(variable.shape) == 1:
       # This is a bias so do not apply regularization.
       continue

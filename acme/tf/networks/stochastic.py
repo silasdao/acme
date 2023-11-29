@@ -98,7 +98,4 @@ class ExpQWeightedPolicy(snt.Module):
     action_dim = len(tiled_actions.get_shape().as_list())
     tiled_actions = tf.transpose(tiled_actions,
                                  perm=[1, 0] + list(range(2, action_dim)))
-    # [B, ...]
-    action_sample = tf.gather_nd(tiled_actions, action_idx)
-
-    return action_sample
+    return tf.gather_nd(tiled_actions, action_idx)

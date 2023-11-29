@@ -327,12 +327,10 @@ def _get_first_available_accelerator_type(
   get_visible_devices = tf.config.get_visible_devices
 
   for wishlist_device in wishlist:
-    devices = get_visible_devices(device_type=wishlist_device)
-    if devices:
+    if devices := get_visible_devices(device_type=wishlist_device):
       return wishlist_device
 
-  available = ', '.join(
-      sorted(frozenset([d.type for d in get_visible_devices()])))
+  available = ', '.join(sorted(frozenset(d.type for d in get_visible_devices())))
   raise RuntimeError(
       'Couldn\'t find any devices from {wishlist}.' +
       f'Only the following types are available: {available}.')

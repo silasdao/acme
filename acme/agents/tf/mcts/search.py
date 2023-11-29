@@ -42,9 +42,7 @@ class Node:
   @property
   def value(self) -> types.Value:  # Q(s, a)
     """Returns the value from this node."""
-    if self.visit_count:
-      return self.total_value / self.visit_count
-    return 0.
+    return self.total_value / self.visit_count if self.visit_count else 0.
 
   @property
   def children_visits(self) -> np.ndarray:
@@ -191,4 +189,4 @@ def argmax(values: np.ndarray) -> types.Action:
 def check_numerics(values: np.ndarray):
   """Raises a ValueError if any of the inputs are NaN or Inf."""
   if not np.isfinite(values).all():
-    raise ValueError('check_numerics failed. Inputs: {}. '.format(values))
+    raise ValueError(f'check_numerics failed. Inputs: {values}. ')

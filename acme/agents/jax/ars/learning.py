@@ -201,10 +201,12 @@ class ARSLearner(acme.Learner):
     # Compute reward_std.
     reward = []
     for _, i in top_directions:
-      reward.append(self._evaluation_state.received_results[PerturbationKey(
-          self._training_state.training_iteration, i, False)].total_reward)
-      reward.append(self._evaluation_state.received_results[PerturbationKey(
-          self._training_state.training_iteration, i, True)].total_reward)
+      reward.extend((
+          self._evaluation_state.received_results[PerturbationKey(
+              self._training_state.training_iteration, i, False)].total_reward,
+          self._evaluation_state.received_results[PerturbationKey(
+              self._training_state.training_iteration, i, True)].total_reward,
+      ))
     reward_std = np.std(reward)
 
     # Compute new policy params.
@@ -251,8 +253,10 @@ class ARSLearner(acme.Learner):
     self._logger.write(counts)
 
   def get_variables(self, names: List[str]) -> List[Any]:
-    assert (names == [ars_networks.BEHAVIOR_PARAMS_NAME] or
-            names == [ars_networks.EVAL_PARAMS_NAME])
+    assert names in [
+        [ars_networks.BEHAVIOR_PARAMS_NAME],
+        [ars_networks.EVAL_PARAMS_NAME],
+    ]
     if names == [ars_networks.EVAL_PARAMS_NAME]:
       return [PerturbationKey(-1, -1, False),
               self._training_state.policy_params,

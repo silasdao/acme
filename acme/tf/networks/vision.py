@@ -64,20 +64,18 @@ class ResNetTorso(snt.Module):
     if isinstance(pool_stride[0], int):
       pool_stride = self._num_layers * (pool_stride,)
 
-    # Create sequence of residual blocks.
-    blocks = []
-    for i in range(self._num_layers):
-      blocks.append(
-          ResidualBlockGroup(
-              num_blocks[i],
-              num_channels[i],
-              conv_shape,
-              conv_stride,
-              pool_size,
-              pool_stride[i],
-              data_format=data_format,
-              activation=activation))
-
+    blocks = [
+        ResidualBlockGroup(
+            num_blocks[i],
+            num_channels[i],
+            conv_shape,
+            conv_stride,
+            pool_size,
+            pool_stride[i],
+            data_format=data_format,
+            activation=activation,
+        ) for i in range(self._num_layers)
+    ]
     # Create output layer.
     out_layer = snt.nets.MLP(num_output_hidden, activation=activation)
 
@@ -90,9 +88,7 @@ class ResNetTorso(snt.Module):
 
     # Convert to floats.
     preprocessed_inputs = _preprocess_inputs(inputs, self._output_dtype)
-    torso_output = self._resnet(preprocessed_inputs)
-
-    return torso_output
+    return self._resnet(preprocessed_inputs)
 
 
 class ResidualBlockGroup(snt.Module):
@@ -149,8 +145,8 @@ class ResidualBlockGroup(snt.Module):
     for i in range(self._num_blocks):
       name = 'residual_block_%d' % i
       self._convs.append(
-          [build_conv_layer(name + '_0'),
-           build_conv_layer(name + '_1')])
+          [build_conv_layer(f'{name}_0'),
+           build_conv_layer(f'{name}_1')])
 
   def __call__(self, inputs: tf.Tensor) -> tf.Tensor:
     # Downscale the inputs.
@@ -172,14 +168,11 @@ def _preprocess_inputs(inputs: tf.Tensor, output_dtype: tf.DType) -> tf.Tensor:
   rank = inputs.shape.rank
   if rank < 4:
     raise ValueError(
-        'Input Tensor must have at least 4 dimensions (for '
-        'batch size, height, width, and channels), but it only has '
-        '{}'.format(rank))
+        f'Input Tensor must have at least 4 dimensions (for batch size, height, width, and channels), but it only has {rank}'
+    )
 
   flattened_inputs = snt.Flatten(preserve_dims=3)(inputs)
-  processed_inputs = tf.image.convert_image_dtype(
-      flattened_inputs, dtype=output_dtype)
-  return processed_inputs
+  return tf.image.convert_image_dtype(flattened_inputs, dtype=output_dtype)
 
 
 class DrQTorso(snt.Module):
@@ -231,6 +224,4 @@ class DrQTorso(snt.Module):
     # Normalize to -0.5 to 0.5
     preprocessed_inputs = _preprocess_inputs(inputs, self._output_dtype) - 0.5
 
-    torso_output = self._network(preprocessed_inputs)
-
-    return torso_output
+    return self._network(preprocessed_inputs)

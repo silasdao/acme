@@ -108,10 +108,7 @@ class Environment(dm_env.Environment):
       if (not isinstance(discount_spec, specs.BoundedArray) or
           not np.isclose(discount_spec.minimum, 0) or
           not np.isclose(discount_spec.maximum, 1)):
-        if path:
-          path_str = ' ' + '/'.join(str(p) for p in path)
-        else:
-          path_str = ''
+        path_str = ' ' + '/'.join(str(p) for p in path) if path else ''
         raise ValueError(
             'discount_spec {}isn\'t a BoundedArray in [0, 1].'.format(path_str))
 
@@ -243,14 +240,15 @@ class NestedDiscreteEnvironment(_BaseDiscreteEnvironment):
                **kwargs):
     """Initialize the environment."""
 
-    observations_spec = {}
-    for key in num_observations:
-      observations_spec[key] = specs.BoundedArray(
-          shape=obs_shape,
-          dtype=obs_dtype,
-          minimum=obs_dtype(0),
-          maximum=obs_dtype(num_observations[key] - 1))
-
+    observations_spec = {
+        key: specs.BoundedArray(
+            shape=obs_shape,
+            dtype=obs_dtype,
+            minimum=obs_dtype(0),
+            maximum=obs_dtype(num_observations[key] - 1),
+        )
+        for key in num_observations
+    }
     super().__init__(
         num_actions=num_actions,
         action_dtype=action_dtype,

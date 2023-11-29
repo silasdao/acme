@@ -271,17 +271,15 @@ class AILLearner(acme.Learner):
   def get_variables(self, names: List[str]) -> List[Any]:
     rewarder_dict = {'discriminator': self._state.discriminator_params}
 
-    learner_names = [name for name in names if name not in rewarder_dict]
-    learner_dict = {}
-    if learner_names:
+    if learner_names := [name for name in names if name not in rewarder_dict]:
       learner_dict = dict(
           zip(learner_names,
               self._direct_rl_learner.get_variables(learner_names)))
-
-    variables = [
+    else:
+      learner_dict = {}
+    return [
         rewarder_dict.get(name, learner_dict.get(name, None)) for name in names
     ]
-    return variables
 
   def save(self) -> TrainingState:
     return TrainingState(

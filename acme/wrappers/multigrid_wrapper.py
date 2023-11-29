@@ -108,9 +108,7 @@ class MultigridWrapper(dm_env.Environment):
     self._last_info = info
 
     def _map_reward_spec(x, t):
-      if np.isscalar(x):
-        return t.dtype.type(x)
-      return np.asarray(x, dtype=t.dtype)
+      return t.dtype.type(x) if np.isscalar(x) else np.asarray(x, dtype=t.dtype)
 
     reward = tree.map_structure(
         _map_reward_spec,
@@ -251,7 +249,7 @@ def _gym_to_spec(space: gym.Space,
     }
 
   else:
-    raise ValueError('Unexpected gym space: {}'.format(space))
+    raise ValueError(f'Unexpected gym space: {space}')
 
 
 def _convert_to_spec(space: gym.Space,

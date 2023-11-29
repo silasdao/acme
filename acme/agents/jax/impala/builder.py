@@ -67,12 +67,7 @@ class IMPALABuilder(Generic[actor_core_lib.RecurrentState],
         policy.get_extras(dummy_actor_state),
         sequence_length=self._config.sequence_length)
 
-    # Maybe create rate limiter.
-    # Setting the samples_per_insert ratio less than the default of 1.0, allows
-    # the agent to drop data for the benefit of using data from most up-to-date
-    # policies to compute its learner updates.
-    samples_per_insert = self._config.samples_per_insert
-    if samples_per_insert:
+    if samples_per_insert := self._config.samples_per_insert:
       if samples_per_insert > 1.0 or samples_per_insert <= 0.0:
         raise ValueError(
             'Impala requires a samples_per_insert ratio in the range (0, 1],'

@@ -54,8 +54,4 @@ class OAREmbedding(hk.Module):
     while reward.ndim < action.ndim:
       reward = jnp.expand_dims(reward, axis=-1)
 
-    # Concatenate on final dimension.
-    embedding = jnp.concatenate(
-        [features, action, reward], axis=-1)  # [T?, B, D+A+1]
-
-    return embedding
+    return jnp.concatenate([features, action, reward], axis=-1)

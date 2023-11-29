@@ -183,7 +183,7 @@ class EnvironmentLoop(core.Worker):
       ValueError: If both 'num_episodes' and 'num_steps' are not None.
     """
 
-    if not (num_episodes is None or num_steps is None):
+    if num_episodes is not None and num_steps is not None:
       raise ValueError('Either "num_episodes" or "num_steps" should be None.')
 
     def should_terminate(episode_count: int, step_count: int) -> bool:

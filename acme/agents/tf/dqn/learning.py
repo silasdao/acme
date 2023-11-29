@@ -187,14 +187,11 @@ class DQNLearner(acme.Learner, tf2_savers.TFSaveable):
         dest.assign(src)
     self._num_steps.assign_add(1)
 
-    # Report loss & statistics for logging.
-    fetches = {
+    return {
         'loss': loss,
         'keys': keys,
         'priorities': priorities,
     }
-
-    return fetches
 
   def step(self):
     # Do a batch of SGD.

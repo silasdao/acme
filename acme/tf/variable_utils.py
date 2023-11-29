@@ -71,18 +71,19 @@ class VariableClient:
 
     period_reached: bool = self._call_counter >= self._update_period
 
-    if period_reached and wait:
-      # Cancel any active request.
-      self._future: Optional[futures.Future] = None
-      self.update_and_wait()
-      self._call_counter = 0
-      return
+    if period_reached:
+      if wait:
+        # Cancel any active request.
+        self._future: Optional[futures.Future] = None
+        self.update_and_wait()
+        self._call_counter = 0
+        return
 
-    if period_reached and self._future is None:
-      # The update period has been reached and no request has been sent yet, so
-      # making an asynchronous request now.
-      self._future = self._async_request()
-      self._call_counter = 0
+      if self._future is None:
+        # The update period has been reached and no request has been sent yet, so
+        # making an asynchronous request now.
+        self._future = self._async_request()
+        self._call_counter = 0
 
     if self._future is not None and self._future.done():
       # The active request is done so copy the result and remove the future.

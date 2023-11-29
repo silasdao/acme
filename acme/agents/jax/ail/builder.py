@@ -129,7 +129,6 @@ def _generate_samples_with_demonstrations(
     the current replay sample info and the batch size will be the same as the
     replay_iterator data batch size.
   """
-  count = 0
   if batch_size % (policy_to_expert_data_ratio + 1) != 0:
     raise ValueError(
         'policy_to_expert_data_ratio + 1 must divide the batch size but '
@@ -138,13 +137,12 @@ def _generate_samples_with_demonstrations(
   policy_insertion_size = batch_size - demo_insertion_size
 
   demonstration_iterator = _rebatch(demonstration_iterator, demo_insertion_size)
-  for sample, demos in zip(replay_iterator, demonstration_iterator):
+  for count, (sample, demos) in enumerate(zip(replay_iterator, demonstration_iterator)):
     output_transitions = tree.map_structure(
         functools.partial(_mix_arrays,
                           index=policy_insertion_size,
                           seed=count),
         sample.data, demos)
-    count += 1
     yield reverb.ReplaySample(info=sample.info, data=output_transitions)
 
 

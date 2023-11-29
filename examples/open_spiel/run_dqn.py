@@ -56,15 +56,13 @@ def main(_):
     networks.append(network)
     policy_networks.append(policy_network)
 
-  # Construct the agents.
-  agents = []
-
-  for network, policy_network in zip(networks, policy_networks):
-    agents.append(
-        dqn.DQN(environment_spec=environment_spec,
-                network=network,
-                policy_network=policy_network))
-
+  agents = [
+      dqn.DQN(
+          environment_spec=environment_spec,
+          network=network,
+          policy_network=policy_network,
+      ) for network, policy_network in zip(networks, policy_networks)
+  ]
   # Run the environment loop.
   loop = open_spiel_environment_loop.OpenSpielEnvironmentLoop(
       environment, agents)

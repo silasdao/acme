@@ -103,9 +103,7 @@ class Checkpointer:
 
     # Convert `Saveable` objects to TF `Checkpointable` first, if necessary.
     def to_ckptable(x: Union[Checkpointable, core.Saveable]) -> Checkpointable:
-      if isinstance(x, core.Saveable):
-        return SaveableAdapter(x)
-      return x
+      return SaveableAdapter(x) if isinstance(x, core.Saveable) else x
 
     objects_to_save = {k: to_ckptable(v) for k, v in objects_to_save.items()}
 
@@ -186,13 +184,7 @@ class CheckpointingRunner(core.Worker):
       **kwargs,
   ):
 
-    if isinstance(wrapped, TFSaveable):
-      # If the object to be wrapped exposes its TF State, checkpoint that.
-      objects_to_save = wrapped.state
-    else:
-      # Otherwise checkpoint the wrapped object itself.
-      objects_to_save = wrapped
-
+    objects_to_save = wrapped.state if isinstance(wrapped, TFSaveable) else wrapped
     self._wrapped = wrapped
     self._time_delta_minutes = time_delta_minutes
     self._checkpointer = Checkpointer(

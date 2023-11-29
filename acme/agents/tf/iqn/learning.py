@@ -262,5 +262,4 @@ def _index_embs_with_actions(
   actions_mask = tf.SparseTensor(indices, values, [batch_size, num_actions])
   actions_mask = tf.stop_gradient(
       tf.sparse.to_dense(actions_mask, default_value=False))
-  sliced_emb = tf.boolean_mask(embeddings, actions_mask)
-  return sliced_emb
+  return tf.boolean_mask(embeddings, actions_mask)

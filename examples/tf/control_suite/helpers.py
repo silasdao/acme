@@ -49,9 +49,4 @@ def make_environment(
         environment, num_repeats=num_action_repeats)
   environment = wrappers.SinglePrecisionWrapper(environment)
 
-  if evaluation:
-    # The evaluator in the distributed agent will set this to True so you can
-    # use this clause to, e.g., set up video recording by the evaluator.
-    pass
-
   return environment

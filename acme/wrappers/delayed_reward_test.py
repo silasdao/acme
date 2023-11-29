@@ -38,7 +38,7 @@ def _episode_reward(env):
 
 def _compare_nested_sequences(seq1, seq2):
   """Compare two sequences of arrays."""
-  return all([(l == m).all() for l, m in zip(seq1, seq2)])
+  return all((l == m).all() for l, m in zip(seq1, seq2))
 
 
 class _DiscreteEnvironmentOneReward(fakes.DiscreteEnvironment):

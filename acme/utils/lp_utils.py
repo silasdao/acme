@@ -58,11 +58,7 @@ def partial_kwargs(function: Callable[..., Any],
   else:
     defaults = argspec.args[-len(argspec.defaults):]
 
-  # Find any keys not given as defaults by the function.
-  unknown_kwargs = set(kwargs.keys()).difference(defaults)
-
-  # Raise an error
-  if unknown_kwargs:
+  if unknown_kwargs := set(kwargs.keys()).difference(defaults):
     error_string = 'Cannot override unknown or non-default kwargs: {}'
     raise ValueError(error_string.format(', '.join(unknown_kwargs)))
 
@@ -126,8 +122,7 @@ def make_xm_docker_resources(program,
     requirements: file containing additional requirements to use.
       If not specified, default Acme dependencies are used instead.
   """
-  if (FLAGS.lp_launch_type != 'vertex_ai' and
-      FLAGS.lp_launch_type != 'local_docker'):
+  if FLAGS.lp_launch_type not in ['vertex_ai', 'local_docker']:
     # Avoid importing 'xmanager' for local runs.
     return None
 
@@ -164,12 +159,10 @@ def make_xm_docker_resources(program,
         atexit.register(os.remove, requirements)
         setup.generate_requirements_file(requirements)
 
-  # Extend PYTHONPATH with paths used by the launcher.
-  python_path = []
-  for path in sys.path:
-    if path.startswith(acme_location) and acme_location != path:
-      python_path.append(path[len(acme_location):])
-
+  python_path = [
+      path[len(acme_location):] for path in sys.path
+      if path.startswith(acme_location) and acme_location != path
+  ]
   if 'replay' in num_nodes:
     replay_cpu = 6 + num_nodes.get('actor', 0) * 0.01
     replay_cpu = min(40, replay_cpu)

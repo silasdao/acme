@@ -167,8 +167,7 @@ class _InternalBCQLearner(core.Learner, tf2_savers.TFSaveable):
     min_q = tf.reduce_min(q_t_value)
     mean_q, var_q = tf.nn.moments(q_t_value, [0, 1])
 
-    # Report loss & statistics for logging.
-    fetches = {
+    return {
         'gradient_norm': global_gradient_norm,
         'loss': loss,
         'max_q': max_q,
@@ -176,8 +175,6 @@ class _InternalBCQLearner(core.Learner, tf2_savers.TFSaveable):
         'min_q': min_q,
         'var_q': var_q,
     }
-
-    return fetches
 
   def step(self):
     # Do a batch of SGD.

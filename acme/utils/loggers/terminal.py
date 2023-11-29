@@ -30,9 +30,7 @@ def _format_key(key: str) -> str:
 def _format_value(value: Any) -> str:
   """Internal function for formatting values."""
   value = base.to_numpy(value)
-  if isinstance(value, (float, np.number)):
-    return f'{value:0.3f}'
-  return f'{value}'
+  return f'{value:0.3f}' if isinstance(value, (float, np.number)) else f'{value}'
 
 
 def serialize(values: base.LoggingData) -> str:

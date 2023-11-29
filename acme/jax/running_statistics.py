@@ -166,10 +166,7 @@ def update(state: RunningStatisticsState,
   # We assume the batch dimensions always go first.
   batch_dims = batch_shape[:len(batch_shape) - tree.flatten(state.mean)[0].ndim]
   batch_axis = range(len(batch_dims))
-  if weights is None:
-    step_increment = np.prod(batch_dims)
-  else:
-    step_increment = jnp.sum(weights)
+  step_increment = np.prod(batch_dims) if weights is None else jnp.sum(weights)
   if pmap_axis_name is not None:
     step_increment = jax.lax.psum(step_increment, axis_name=pmap_axis_name)
   count = state.count + step_increment
@@ -283,11 +280,9 @@ def denormalize(batch: types.NestedArray,
   """
 
   def denormalize_leaf(data: jnp.ndarray, mean: jnp.ndarray,
-                       std: jnp.ndarray) -> jnp.ndarray:
+                         std: jnp.ndarray) -> jnp.ndarray:
     # Only denormalize inexact types.
-    if not np.issubdtype(data.dtype, np.inexact):
-      return data
-    return data * std + mean
+    return data if not np.issubdtype(data.dtype, np.inexact) else data * std + mean
 
   return tree_utils.fast_map_structure(denormalize_leaf, batch, mean_std.mean,
                                        mean_std.std)

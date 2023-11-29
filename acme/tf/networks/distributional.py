@@ -131,12 +131,9 @@ class MultivariateNormalDiagHead(snt.Module):
     if self._tanh_mean:
       mean = tf.tanh(mean)
 
-    if self._use_tfd_independent:
-      dist = tfd.Independent(tfd.Normal(loc=mean, scale=scale))
-    else:
-      dist = tfd.MultivariateNormalDiag(loc=mean, scale_diag=scale)
-
-    return dist
+    return (tfd.Independent(tfd.Normal(loc=mean, scale=scale))
+            if self._use_tfd_independent else tfd.MultivariateNormalDiag(
+                loc=mean, scale_diag=scale))
 
 
 class GaussianMixture(snt.Module):

@@ -102,9 +102,7 @@ def fetch_devicearray(values: types.Nest) -> types.Nest:
 
 
 def _fetch_devicearray(x):
-  if isinstance(x, jax.Array):
-    return np.asarray(x)
-  return x
+  return np.asarray(x) if isinstance(x, jax.Array) else x
 
 
 def batch_to_sequence(values: types.Nest) -> types.NestedArray:
@@ -295,16 +293,15 @@ class PutToDevicesIterable(Iterable[types.NestedArray]):
         raise StopIteration
       if self.split_fn is None:
         return jax.device_put_sharded(tuple(items), self.devices)
-      else:
-        # ((host: x1, device: y1), ..., (host: xN, device: yN)).
-        items_split = (self.split_fn(item) for item in items)
-        # (host: (x1, ..., xN), device: (y1, ..., yN)).
-        split = tree.map_structure_up_to(
-            PrefetchingSplit(None, None), lambda *x: x, *items_split)
+      # ((host: x1, device: y1), ..., (host: xN, device: yN)).
+      items_split = (self.split_fn(item) for item in items)
+      # (host: (x1, ..., xN), device: (y1, ..., yN)).
+      split = tree.map_structure_up_to(
+          PrefetchingSplit(None, None), lambda *x: x, *items_split)
 
-        return PrefetchingSplit(
-            host=np.stack(split.host),
-            device=jax.device_put_sharded(split.device, self.devices))
+      return PrefetchingSplit(
+          host=np.stack(split.host),
+          device=jax.device_put_sharded(split.device, self.devices))
 
     except StopIteration:
       raise

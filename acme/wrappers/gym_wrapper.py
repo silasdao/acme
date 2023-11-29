@@ -71,8 +71,7 @@ class GymWrapper(dm_env.Environment):
         self.reward_spec())
 
     if done:
-      truncated = info.get('TimeLimit.truncated', False)
-      if truncated:
+      if truncated := info.get('TimeLimit.truncated', False):
         return dm_env.truncation(reward, observation)
       return dm_env.termination(reward, observation)
     return dm_env.transition(reward, observation)
@@ -98,8 +97,7 @@ class GymWrapper(dm_env.Environment):
 
   def __getattr__(self, name: str):
     if name.startswith('__'):
-      raise AttributeError(
-          "attempted to get missing private attribute '{}'".format(name))
+      raise AttributeError(f"attempted to get missing private attribute '{name}'")
     return getattr(self._environment, name)
 
   def close(self):
@@ -159,7 +157,7 @@ def _convert_to_spec(space: gym.Space,
     }
 
   else:
-    raise ValueError('Unexpected gym space: {}'.format(space))
+    raise ValueError(f'Unexpected gym space: {space}')
 
 
 class GymAtariAdapter(GymWrapper):

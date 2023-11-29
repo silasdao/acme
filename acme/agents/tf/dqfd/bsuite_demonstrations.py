@@ -127,9 +127,8 @@ def _make_deep_sea_stochastic_dataset(environment: deep_sea.DeepSea):
 def make_dataset(environment: dm_env.Environment, stochastic: bool):
   """Make bsuite demos for the current task."""
 
+  assert isinstance(environment, deep_sea.DeepSea)
   if not stochastic:
-    assert isinstance(environment, deep_sea.DeepSea)
     return _make_deep_sea_dataset(environment)
   else:
-    assert isinstance(environment, deep_sea.DeepSea)
     return _make_deep_sea_stochastic_dataset(environment)

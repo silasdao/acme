@@ -207,17 +207,15 @@ class RNDLearner(acme.Learner):
         'predictor_params': self._state.params
     }
 
-    learner_names = [name for name in names if name not in rnd_variables]
-    learner_dict = {}
-    if learner_names:
+    if learner_names := [name for name in names if name not in rnd_variables]:
       learner_dict = dict(
           zip(learner_names,
               self._direct_rl_learner.get_variables(learner_names)))
-
-    variables = [
+    else:
+      learner_dict = {}
+    return [
         rnd_variables.get(name, learner_dict.get(name, None)) for name in names
     ]
-    return variables
 
   def save(self) -> GlobalTrainingState:
     return GlobalTrainingState(

@@ -68,9 +68,7 @@ class NoOpLogger(Logger):
 def tensor_to_numpy(value: Any):
   if hasattr(value, 'numpy'):
     return value.numpy()  # tf.Tensor (TF2).
-  if hasattr(value, 'device_buffer'):
-    return np.asarray(value)  # jnp.DeviceArray.
-  return value
+  return np.asarray(value) if hasattr(value, 'device_buffer') else value
 
 
 def to_numpy(values: Any):

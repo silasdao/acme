@@ -29,9 +29,7 @@ tfd = tfp.distributions
 
 
 def _fetch_devicearray(x):
-  if isinstance(x, jax.Array):
-    return np.asarray(x)
-  return x
+  return np.asarray(x) if isinstance(x, jax.Array) else x
 
 
 def get_from_first_device(nest, as_numpy: bool = True):
@@ -69,8 +67,7 @@ def rolling_window(x: jnp.ndarray,
     idx = starts[None, :] + ends[:, None]  # Output will be [..., W, N, ...].
   else:
     idx = starts[:, None] + ends[None, :]  # Output will be [..., N, W, ...].
-  out = jnp.take(x, idx, axis=axis)
-  return out
+  return jnp.take(x, idx, axis=axis)
 
 
 def tree_map_distribution(
@@ -81,8 +78,7 @@ def tree_map_distribution(
     safe_f = lambda y: f(y) if isinstance(y, jnp.ndarray) else y
     nil, tree_data = x.tree_flatten()
     new_tree_data = jax.tree_map(safe_f, tree_data)
-    new_x = x.tree_unflatten(new_tree_data, nil)
-    return new_x
+    return x.tree_unflatten(new_tree_data, nil)
   elif isinstance(x, tfd.Distribution):
     return jax.tree_map(f, x)
   else:

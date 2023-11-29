@@ -184,8 +184,7 @@ class DQNBuilder(builders.ActorLearnerBuilder[dqn_networks.DQNNetworks,
       epsilon = self._config.eval_epsilon
     else:
       epsilon = self._config.epsilon
-    epsilons = epsilon if isinstance(epsilon, Sequence) else (epsilon,)
-    return epsilons
+    return epsilon if isinstance(epsilon, Sequence) else (epsilon,)
 
   def make_policy(self,
                   networks: dqn_networks.DQNNetworks,

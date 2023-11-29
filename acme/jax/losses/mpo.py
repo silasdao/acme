@@ -146,11 +146,7 @@ class MPO:
   def init_params(self, action_dim: int, dtype: DType = jnp.float32):
     """Creates an initial set of parameters."""
 
-    if self._per_dim_constraining:
-      dual_variable_shape = [action_dim]
-    else:
-      dual_variable_shape = [1]
-
+    dual_variable_shape = [action_dim] if self._per_dim_constraining else [1]
     log_temperature = jnp.full([1], self._init_log_temperature, dtype=dtype)
 
     log_alpha_mean = jnp.full(

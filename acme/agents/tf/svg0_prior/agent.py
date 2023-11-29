@@ -100,8 +100,7 @@ class SVG0Networks:
       self,
   ) -> snt.Module:
     """Create a single network which evaluates the prior."""
-    behavior_prior = self.prior_network
-    return behavior_prior
+    return self.prior_network
 
 
 class SVG0Builder:

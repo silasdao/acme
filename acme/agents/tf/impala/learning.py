@@ -158,14 +158,12 @@ class IMPALALearner(acme.Learner, tf2_savers.TFSaveable):
     gradients, _ = tf.clip_by_global_norm(gradients, self._max_gradient_norm)
     self._optimizer.apply(gradients, self._network.trainable_variables)
 
-    metrics = {
+    return {
         'loss': loss,
         'critic_loss': tf.reduce_mean(critic_loss),
         'entropy_loss': tf.reduce_mean(entropy_loss),
         'policy_gradient_loss': tf.reduce_mean(policy_gradient_loss),
     }
-
-    return metrics
 
   def step(self):
     """Does a step of SGD and logs the results."""
